@@ -8,14 +8,15 @@ import { signIn } from "@/features/auth/actions";
 
 type SignInPageProps = {
   searchParams: Promise<{
-    error?: string;
-  }>;
+  error?: string;
+  message?: string;
+}>;
 };
 
 export default async function SignInPage({
   searchParams,
 }: SignInPageProps) {
-  const { error } = await searchParams;
+  const { error, message } = await searchParams;
 
   return (
     <main
@@ -38,6 +39,15 @@ export default async function SignInPage({
           Continue to your Clario workspace.
         </p>
 
+        {message === "password-updated" ? (
+        <p
+            className="mt-5 rounded-md border border-border bg-muted/40 p-3 text-sm"
+            role="status"
+        >
+            Your password has been updated. Sign in with your new password.
+        </p>
+        ) : null}
+
         {error ? (
           <FieldError className="mt-5">
             {error === "credentials"
@@ -46,7 +56,9 @@ export default async function SignInPage({
                     ? "The confirmation link is invalid or has expired."
                     : error === "signout"
                     ? "We could not sign you out. Try again."
-                    : "Check the form and try again."}
+                    : error === "recovery"
+                        ? "The password recovery link is invalid or has expired."
+                        : "Check the form and try again."}
           </FieldError>
         ) : null}
 
@@ -72,6 +84,15 @@ export default async function SignInPage({
               type="password"
             />
           </Field>
+
+          <div className="text-right">
+            <Link
+                className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                href="/auth/forgot-password"
+            >
+                Forgot password?
+            </Link>
+          </div>
 
           <Button className="w-full" type="submit">
             Sign in

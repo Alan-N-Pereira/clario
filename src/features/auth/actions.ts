@@ -2,7 +2,12 @@
 
 import { redirect } from "next/navigation";
 
-import { signInSchema, signUpSchema } from "@/features/auth/schemas";
+import {
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  signInSchema,
+  signUpSchema,
+} from "@/features/auth/schemas";
 import { getPublicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 
@@ -92,4 +97,86 @@ export async function signOut() {
   }
 
   redirect("/auth/sign-in");
+}
+
+export async function requestPasswordReset(formData: FormData) {
+  const result = forgotPasswordSchema.safeParse({
+    email: formData.get("email"),
+  });
+
+  if (!result.success) {
+    redirect("/auth/forgot-password?error=invalid");
+  }
+
+  const supabase = await createClient();
+  const { NEXT_PUBLIC_SITE_URL } = getPublicEnv();
+
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    result.data.email,
+    {
+      redirectTo: `${NEXT_PUBLIC_SITE_URL}/auth/recovery`,
+    },
+  );
+
+  if (error) {
+    console.error("Supabase password-reset email failed", {
+      code: error.code,
+      message: error.message,
+      status: error.status,
+    });
+
+    redirect("/auth/forgot-password?error=send");
+  }
+
+  redirect("/auth/forgot-password?sent=1");
+}
+
+export async function updatePassword(formData: FormData) {
+  const result = resetPasswordSchema.safeParse({
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
+
+  if (!result.success) {
+    redirect("/auth/reset-password?error=invalid");
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/auth/sign-in?error=recovery");
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password: result.data.password,
+  });
+
+  if (error) {
+    console.error("Supabase password update failed", {
+      code: error.code,
+      message: error.message,
+      status: error.status,
+    });
+
+    redirect("/auth/reset-password?error=update");
+  }
+
+  const { error: signOutError } = await supabase.auth.signOut({
+    scope: "local",
+  });
+
+  if (signOutError) {
+    console.error("Supabase post-reset sign-out failed", {
+      code: signOutError.code,
+      message: signOutError.message,
+      status: signOutError.status,
+    });
+  }
+
+  redirect("/auth/sign-in?message=password-updated");
 }
