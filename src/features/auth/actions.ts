@@ -73,3 +73,23 @@ export async function signIn(formData: FormData) {
 
   redirect("/app");
 }
+
+export async function signOut() {
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signOut({
+    scope: "local",
+  });
+
+  if (error) {
+    console.error("Supabase sign-out failed", {
+      code: error.code,
+      message: error.message,
+      status: error.status,
+    });
+
+    redirect("/auth/sign-in?error=signout");
+  }
+
+  redirect("/auth/sign-in");
+}

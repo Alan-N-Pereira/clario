@@ -44,6 +44,8 @@ export default async function SignInPage({
                 ? "The email or password is incorrect."
                 : error === "confirmation"
                     ? "The confirmation link is invalid or has expired."
+                    : error === "signout"
+                    ? "We could not sign you out. Try again."
                     : "Check the form and try again."}
           </FieldError>
         ) : null}

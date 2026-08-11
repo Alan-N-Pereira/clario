@@ -9,7 +9,11 @@ import {
   ReceiptText,
   Settings2,
   UsersRound,
+  LogOut,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { signOut } from "@/features/auth/actions";
 
 import { PageContainer } from "@/components/layout/page-container";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -60,6 +64,17 @@ function NavigationItems() {
           </div>
         );
       })}
+      <form action={signOut} className="mt-2">
+        <Button
+          className="w-full justify-start"
+          size="sm"
+          type="submit"
+          variant="ghost"
+        >
+          <LogOut aria-hidden="true" className="size-4" />
+          Sign out
+        </Button>
+      </form>
     </nav>
   );
 }
