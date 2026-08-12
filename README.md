@@ -1,32 +1,38 @@
-# Clario
+﻿# Clario
 
 Clario is a multi-tenant client-management SaaS portfolio project for freelancers, consultants and small agencies. The intended product connects leads, clients, projects, project updates, proposals, invoices and a restricted client portal in one application.
 
 ## Repository status
 
-The repository is currently at **Phase 1: tooling and design foundation**.
+The repository has completed **Phase 2: authentication and multi-tenant security foundation**.
 
-Implemented in this phase:
+Phase 3 will introduce real workspace onboarding and dashboard data.
 
-- Next.js App Router foundation
+Completed foundations currently include:
+
+- Next.js App Router
+- strict TypeScript
 - Tailwind CSS design tokens
-- Light, dark and system themes
-- Shared buttons, fields, status badges and feedback states
-- Responsive marketing and workspace shells
-- Skip-to-content navigation and reduced-motion handling
-- Vitest and React Testing Library configuration
-- Core project documentation
+- light, dark and system themes
+- responsive marketing and workspace shells
+- accessible shared interface primitives
+- Vitest and React Testing Library
+- hosted Supabase connectivity
+- Supabase Auth
+- PostgreSQL migrations
+- Row Level Security
+- typed Supabase clients
+- protected authenticated workspace routes
 
 Not implemented yet:
 
-- Supabase authentication or database access
-- Workspace onboarding
-- Dashboard queries
-- Lead, client or project CRUD
-- Proposal and invoice workflows
-- Client portal data
+- workspace onboarding UI
+- real dashboard queries
+- lead, client or project CRUD
+- proposal and invoice workflows
+- client-portal data and authorization
 - Playwright configuration
-- Vercel deployment
+- Vercel production deployment
 
 No completed feature, test run or deployment is claimed unless it has been verified and recorded in `BUILD_LOG.md`.
 
@@ -36,25 +42,33 @@ Not deployed yet.
 
 ## Screenshots
 
-Screenshots will be added after the related screens exist and have been manually checked. No placeholder image is presented as a completed interface.
+Screenshots will be added after the related screens exist, are deployed and have been manually checked.
+
+No placeholder image is presented as a completed interface.
 
 ## Problem being solved
 
-Independent professionals often keep lead details, delivery notes and financial documents across unrelated tools. Clario is intended to provide a clearer record of the relationship from enquiry through delivery and billing while keeping internal workspace information separate from client-visible information.
+Independent professionals often keep lead details, delivery notes and financial documents across unrelated tools.
+
+Clario is intended to provide a clearer record of the relationship from enquiry through delivery and billing while keeping internal workspace information separate from client-visible information.
 
 ## Why this project was selected
 
-Personal reflection pending. This section will be updated from the project owner’s confirmed notes rather than invented experience.
+Personal reflection pending.
+
+This section will be updated from the project owner's confirmed notes rather than invented experience.
 
 ## Target users
 
-- Workspace owners who control settings and all workspace data
-- Workspace members who manage operational records without owner-only controls
-- Client users who can access only records linked to their client account
+- Workspace owners who control workspace-level settings and data
+- Workspace members who collaborate on operational records
+- Client users who will access only records explicitly linked to their client identity
+
+Client-user functionality belongs to a later phase and is not implemented yet.
 
 ## Implemented features
 
-### Phase 1 foundation
+### Phase 1 â€” tooling and design foundation
 
 - Product-specific metadata and landing-page foundation
 - Responsive internal application shell
@@ -62,83 +76,178 @@ Personal reflection pending. This section will be updated from the project owner
 - Accessible buttons and native form primitives
 - Semantic status badges
 - Empty, error and loading states
-- Theme selection stored with `next-themes`
+- Light, dark and system themes through `next-themes`
 - Sonner toast host
 - Route-level loading and error boundaries for `/app`
 - Custom not-found page
 - Component and utility tests
+- Responsive fixes verified at a 320-pixel viewport
+
+### Phase 2 â€” authentication and tenancy
+
+- Dedicated hosted Supabase development environment
+- Runtime validation of browser-safe environment variables with Zod
+- Supabase browser client
+- Supabase server client
+- Supabase Proxy client for SSR session refresh
+- Generated Supabase TypeScript database definitions
+- Versioned PostgreSQL migrations
+- `profiles` application-user table
+- `workspaces` tenancy table
+- `workspace_members` internal membership table
+- Auth-user profile provisioning
+- Controlled workspace creation through an RPC
+- Row Level Security on all current application tables
+- Privileged authorization helpers in a non-exposed PostgreSQL schema
+- Email/password sign-up
+- Email confirmation
+- Email/password sign-in
+- Sign out
+- Password recovery
+- Cookie-backed SSR sessions
+- Next.js Proxy session refresh
+- Protected `/app` routes
+- Real two-user tenant-isolation verification
+- Anonymous workspace-access verification
 
 ## Planned Release 1 features
 
-- Supabase email-and-password authentication
-- Workspace onboarding and optional demonstration data
-- Dashboard analytics scoped to the active workspace
-- Lead pipeline and table view
-- Client and project management
-- Internal and client-visible project updates
-- Proposal and invoice builders
-- Restricted client portal
-- Search, filtering and responsive navigation
-- Unit, component and essential Playwright tests
-- Vercel deployment documentation
+Remaining Release 1 work includes:
+
+- workspace onboarding
+- optional controlled demonstration data
+- dashboard analytics scoped to the authenticated workspace
+- lead pipeline and table view
+- client management
+- project management
+- internal and client-visible project updates
+- proposal workflow
+- invoice workflow
+- restricted client portal
+- search and filtering where useful
+- responsive application navigation
+- additional unit and component tests
+- essential Playwright end-to-end tests
+- Vercel deployment
+- portfolio screenshots and walkthrough evidence
 
 ## Planned Release 2 features
 
 Release 2 remains separate from the portfolio MVP:
 
-- Team invitations
-- File uploads
-- Realtime updates
+- team invitations
+- file uploads
+- realtime updates
 - Stripe subscriptions
-- Generated PDFs
-- Email notifications
-- Command palette
-- Advanced analytics
-- Recurring invoices
-- Custom branding
-- Multiple currencies
+- generated PDFs
+- email notifications
+- command palette
+- advanced analytics
+- recurring invoices
+- custom branding
+- multiple currencies
 - CSV exports
-- Automated reminders
+- automated reminders
 
 ## Technology stack
 
+Current stack:
+
 - Next.js App Router
-- React and strict TypeScript
+- React
+- strict TypeScript
 - Tailwind CSS
 - shadcn/ui-compatible component structure
 - Lucide icons
-- next-themes
+- `next-themes`
 - Sonner
+- Supabase Auth
+- Supabase PostgreSQL
+- `@supabase/ssr`
+- `@supabase/supabase-js`
+- Zod
 - Vitest
 - React Testing Library
-- Supabase, Zod, React Hook Form, TanStack Query, dnd-kit, Recharts and Playwright in later phases
+
+React Hook Form, TanStack Query, dnd-kit, Recharts and Playwright remain candidates for later phases where the related workflows justify them.
 
 ## Architecture summary
 
-Server Components are the default for pages and initial data loading. Client Components are limited to interactions that need browser state, such as theme selection, forms, drag-and-drop and optimistic updates.
+Server Components are the default for pages and authenticated data access.
 
-Feature code will live under `src/features`. Shared visual primitives live under `src/components`, and cross-feature utilities live under `src/lib`.
+Client Components are reserved for interactions that require browser state, effects, event handlers or browser-only APIs.
 
-Supabase Row Level Security will remain the final authorization boundary. Route redirects and hidden controls will not be treated as sufficient security.
+Feature code lives under `src/features`. Shared interface and layout components live under `src/components`, while cross-feature utilities and infrastructure live under `src/lib`.
+
+Supabase Row Level Security remains the final database authorization boundary. Route redirects and hidden interface controls are not treated as sufficient authorization.
+
+Authentication session refresh is handled through Next.js Proxy, while protected workspace layouts independently verify authenticated identity before rendering.
 
 ## Route overview
 
 Implemented:
 
-- `/` — marketing foundation
-- `/app` — workspace shell foundation
+- `/` â€” public marketing page
+- `/app` â€” authenticated workspace shell
+- `/auth/sign-up` â€” account creation
+- `/auth/sign-in` â€” sign in
+- `/auth/check-email` â€” confirmation-email instruction
+- `/auth/confirm` â€” signup PKCE callback
+- `/auth/forgot-password` â€” password-reset request
+- `/auth/recovery` â€” password-recovery PKCE callback
+- `/auth/reset-password` â€” authenticated password update
 
-Planned public routes include `/pricing`, authentication and password recovery. Planned authenticated routes cover leads, clients, projects, proposals, invoices and settings. Client-facing routes will live under `/portal`.
+Later application routes will cover leads, clients, projects, proposals, invoices and settings.
+
+Client-facing routes will live under `/portal`.
 
 ## Database summary
 
-No application database migration exists yet. Phase 2 will introduce versioned SQL migrations, UUID primary keys, tenant-scoped relationships, indexes and Row Level Security.
+Phase 2 introduced the core multi-tenant PostgreSQL model.
 
-The current recommendation is to store monetary values in integer minor units and tax rates in basis points. This will be confirmed before the financial schema is implemented.
+Current application tables:
+
+- `profiles`
+- `workspaces`
+- `workspace_members`
+
+`auth.users` remains Supabase Auth's source of identity.
+
+When an Auth user is created, Clario provisions the related application profile.
+
+Workspace membership is represented separately through `workspace_members`.
+
+Privileged authorization helpers and privileged workspace-creation logic live in the non-exposed `private` PostgreSQL schema.
+
+The browser-facing `public.create_workspace` RPC is a narrow wrapper around the private implementation.
+
+Generated TypeScript database definitions live in:
+
+```text
+src/lib/supabase/database.types.ts
+```
 
 ## Row Level Security summary
 
-RLS is not implemented yet because the database schema belongs to Phase 2. Planned policies will isolate workspaces and restrict client users to linked client records and client-visible updates.
+RLS is enabled on every current application table.
+
+Current policies protect profiles, workspaces and workspace memberships.
+
+Phase 2 verified the policies using two real authenticated users:
+
+- each user could read their own profile
+- each user could read their own workspace and owner membership
+- User A could not read User B's workspace, memberships or profile
+- User B could not read User A's workspace, memberships or profile
+- anonymous workspace access was denied
+
+The integration verification runs through:
+
+```bash
+npm run test:rls
+```
+
+Future application tables must receive their own appropriate RLS policies before being treated as complete.
 
 ## Local setup
 
@@ -148,10 +257,25 @@ Requirements:
 - npm
 - Git
 
-Install and verify:
+For a clean checkout:
 
 ```bash
-npm install
+npm ci
+```
+
+Copy the environment example to `.env.local`.
+
+PowerShell:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+Then fill in the local browser-safe Supabase values without committing them.
+
+Run:
+
+```bash
 npm run lint
 npm run typecheck
 npm run test
@@ -159,103 +283,204 @@ npm run build
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open:
 
-`npm install` is required after Phase 1 because new dependencies were added. Once the lockfile is regenerated and committed, clean environments should use `npm ci`.
+```text
+http://localhost:3000
+```
+
+Use `npm install` rather than `npm ci` when intentionally changing dependencies.
 
 ## Environment variables
 
-Copy the example file:
+The application expects:
 
-```bash
-cp .env.example .env.local
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+NEXT_PUBLIC_SITE_URL
 ```
 
-The example currently lists the public Supabase URL, publishable key and site URL. Do not place service-role keys or secrets in `NEXT_PUBLIC_*` variables.
+These names are documented in `.env.example`.
+
+Real development values belong in `.env.local`.
+
+`NEXT_PUBLIC_*` variables are browser-visible and must never contain privileged secrets.
+
+A Supabase `service_role` key must never be exposed through browser code or committed to the repository.
 
 ## Supabase setup
 
-Supabase is not connected in Phase 1. Setup, migrations, generated types, authentication redirects and RLS instructions will be added in Phase 2.
+Development uses a dedicated hosted Supabase project rather than a local Docker-based Supabase stack.
+
+The application uses:
+
+- a browser Supabase client
+- a server Supabase client
+- a Next.js Proxy Supabase client for session refresh
+- generated TypeScript database definitions
+- versioned SQL migrations
+- Supabase email/password Auth
+- PostgreSQL Row Level Security
+
+The hosted development project is linked through the Supabase CLI for migration and type-generation workflows.
+
+Real project values, account credentials and authentication tokens must not be committed.
 
 ## Migrations
 
-No migrations exist yet. Future migrations will be stored in `supabase/migrations` and applied in order through the Supabase CLI.
+Versioned PostgreSQL migrations are stored in:
+
+```text
+supabase/migrations
+```
+
+Phase 2 migrations introduced:
+
+- the core profile, workspace and workspace-membership schema
+- core tenancy RLS policies
+- Auth-user provisioning
+- controlled workspace creation
+- hardening that moved privileged security-definer helpers into the non-exposed `private` schema
+
+Migrations are applied through the Supabase CLI.
+
+Database TypeScript definitions are regenerated from the linked development project after relevant schema changes.
 
 ## Demonstration data
 
-Not implemented. The eventual generator will use authenticated server-side operations protected by RLS and will be idempotent.
+Application demonstration-data generation has not been implemented yet.
+
+When added, demonstration data must respect authenticated workspace ownership, RLS and repeatable/idempotent setup requirements.
 
 ## Testing
 
-Current scripts:
+The standard unit and component suite runs with:
 
 ```bash
 npm run test
+```
+
+Additional local commands include:
+
+```bash
 npm run test:watch
 npm run test:coverage
 ```
 
-The current tests cover shared class merging, button behavior, field semantics and the empty-state region. Passing results must be confirmed locally or in CI before being recorded.
+Phase 2 also includes a hosted Supabase tenancy integration check:
 
-Playwright scripts are reserved in `package.json`, but Playwright is not installed or configured until Phase 8. Running them now is expected to fail.
+```bash
+npm run test:rls
+```
+
+`test:rls` signs in two confirmed development Auth users and verifies:
+
+- each user can access their own profile and workspace
+- User A cannot read User B's protected records
+- User B cannot read User A's protected records
+- anonymous workspace access is denied
+
+The RLS test requires temporary credentials supplied only to the local shell session.
+
+Those credentials must never be committed or placed in example environment files.
+
+The latest confirmed standard suite before final Phase 2 documentation cleanup contained:
+
+- 6 test files
+- 21 tests
+
+Playwright scripts are reserved in `package.json`, but Playwright is not installed or configured yet.
+
+## Continuous integration
+
+GitHub Actions runs the standard quality checks for pull requests and pushes to `main`:
+
+```text
+lint
+type-check
+unit/component tests
+production build
+```
+
+The hosted RLS integration test is intentionally not part of ordinary CI because it requires real controlled Auth identities and credentials.
 
 ## Deployment
 
-The application is not yet prepared for production deployment. Vercel and Supabase redirect configuration will be documented after authentication and all Release 1 checks pass.
+Production deployment has not been completed.
+
+Vercel deployment, production Supabase redirect configuration, deployment verification and portfolio evidence belong to the final release/deployment phase.
+
+The Supabase Free plan is sufficient for the initial portfolio release, but the public portfolio presentation will not rely solely on the hosted development backend remaining continuously active.
 
 ## Accessibility approach
 
-The foundation includes:
+Implemented accessibility foundations include:
 
-- Semantic landmarks
-- A skip-to-content link
-- Visible labels for form controls
-- Visible keyboard focus
-- Native buttons and inputs
-- Error messages with alert semantics
-- Loading text for screen readers
-- Reduced-motion handling
-- Dark and light tokens designed for readable contrast
+- semantic landmarks
+- skip-to-content navigation
+- visible labels for form controls
+- visible keyboard focus
+- native buttons and inputs
+- error messages with appropriate semantics
+- loading text for screen readers
+- reduced-motion handling
+- responsive mobile layouts
+- light and dark design tokens
 
-Automated accessibility testing and documented keyboard workflows are planned for Phase 8.
+Automated accessibility testing and documented keyboard workflows remain planned for the later testing phase.
 
 ## Performance approach
 
-Server Components remain the default, and the theme and toast providers are the only global Client Components introduced in this phase. Performance claims will be added only after measurement.
+Server Components remain the default for pages and authenticated data access.
+
+Global client-side behavior remains limited to interactions that genuinely require browser state, such as theme selection and toast presentation.
+
+Performance claims will be added only after measurement.
 
 ## Security approach
 
-- No secret values are committed
-- `.env.local` remains ignored
-- Browser-safe environment names are documented separately
-- Authorization will be implemented in server code and RLS
-- Raw database errors will not be shown to users
-- Service-role keys will never be exposed to browser code
+Current security practices include:
 
-See `SECURITY.md` for the current security model and limitations.
+- no secret values committed to the repository
+- `.env.local` remains ignored
+- browser-safe environment names are documented separately
+- authenticated workspace routes verify the user on the server
+- current database authorization is enforced through PostgreSQL RLS
+- privileged database helpers live outside the exposed API schema
+- raw Supabase errors are not displayed directly to users
+- service-role keys are not exposed to browser code
+- cross-tenant negative access is tested with real Auth identities
+
+See `SECURITY.md` for the current security model and remaining limitations.
 
 ## Technical decisions
 
-See `DECISIONS.md`. Decisions are written neutrally until the project owner confirms personal reasoning.
+See `DECISIONS.md`.
+
+Decisions are written neutrally until the project owner confirms personal reasoning.
 
 ## Trade-offs
 
 - A hosted Supabase development project avoids adding Docker but makes local database resets less convenient.
-- Native form primitives are established before React Hook Form integration to keep Phase 1 focused.
-- The `/app` route is a clearly labelled shell, not a static replacement for authenticated dashboard data.
-- The package lock must be regenerated after dependency installation before `npm ci` can be treated as authoritative.
+- Supabase's Free plan keeps the portfolio release cost-free but introduces testing-oriented email limits and possible inactive-project pausing.
+- Native form primitives remain the base form layer, while Zod validates authentication input at the server boundary.
+- Additional form libraries will only be introduced where later workflows justify them.
+- `/app` is authenticated but still contains foundation/demo workspace content rather than real business data.
 
 ## Known limitations
 
-- Authentication and tenant isolation do not exist yet.
-- The marketing page is only a foundation, not the complete Release 1 site.
-- The workspace navigation labels future phases instead of linking to missing routes.
-- Browser and accessibility verification still require manual confirmation.
-- No production deployment exists.
+- `/app` is authenticated but still contains foundation/demo workspace content rather than real dashboard queries.
+- workspace onboarding UI is not implemented yet
+- lead, client, project, proposal and invoice workflows are not implemented yet
+- client-portal authorization is not implemented yet
+- Playwright end-to-end testing is not configured yet
+- production monitoring is not configured
+- no production deployment exists yet
 
 ## Development reflections
 
-The following case-study sections require the project owner’s real experience:
+The following case-study sections require the project owner's real experience:
 
 - What I personally learned: pending
 - Most difficult implementation problem: pending
@@ -265,7 +490,9 @@ The following case-study sections require the project owner’s real experience:
 
 ## Roadmap
 
-Development follows the numbered phases in `BUILD_LOG.md`. Release 2 does not start until Release 1 meets its acceptance criteria.
+Development follows the numbered phases recorded in `BUILD_LOG.md`.
+
+Release 2 does not start until Release 1 meets its acceptance criteria.
 
 ## Author
 
@@ -273,4 +500,6 @@ Project owner details pending confirmation.
 
 ## License
 
-No open-source license has been selected yet. Until a license is added, normal copyright restrictions apply.
+No open-source license has been selected yet.
+
+Until a license is added, normal copyright restrictions apply.
