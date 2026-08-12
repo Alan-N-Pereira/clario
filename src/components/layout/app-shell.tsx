@@ -98,10 +98,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             <NavigationItems />
 
             <div className="mt-auto rounded-lg border border-border bg-muted/30 p-3">
-              <StatusBadge tone="info">Foundation</StatusBadge>
+              <StatusBadge tone="info"> Authenticated foundation</StatusBadge>
               <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                Authentication and workspace data are introduced in the next
-                phases.
+                Authentication is active. Workspace data workflows begin in Phase 3.
               </p>
             </div>
           </div>
